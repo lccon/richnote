@@ -62,9 +62,15 @@ String：key和value都是string类型；
 
 ​						④getrange/setrange：getrange是截取value个数，如：getrange k1 0 3，把k1的value截取0-3个						字符，setrange是替换字符串，如：setrange k1 0 xxx，把k1的value从0位开始替换为xxx；
 
-​						⑤setex/setnx：setex是设置过期时间，如：setex k1 10 v1，k1的过期时间为10秒后；
+​						⑤setex/setnx/del：setex是设置过期时间，如：setex k1 10 v1，k1的过期时间为10秒后；
 
-​						setnx是redis先自己判断数据库中存不存在key，存在不做任何操作，否则插入数据库中；
+​						setnx job "hello" :
+
+​						如果当前job存在，则返回0，表明赋值不成功。
+
+​						如果当前job不存在，则返回1，表明赋值成功。
+
+​						del job: 单独删除操作命令
 
 ​						⑥mset/mget/msetnx：mset可以一次性插入多个key和value，mset k1 v1 k2 v2；
 
