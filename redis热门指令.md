@@ -144,11 +144,11 @@ Set：无序无重复；
 
 Sorted Set：有序无重复，value为键值对；
 
-​			**方法:**   ①zdd：添加set集合，如zset zset01 60 v1 70 v2 80 v3;
+​			**方法:**   ①zadd：添加set集合，如zadd zset01 60 v1 70 v2 80 v3;
 
 ​						zrange：查看所有的key和value，如zrange zset01 0 -1，查看所有的value，zrange zset01 0 -1 						withscores，查看所有的key和value；
 
-​						②zrangebyscore：指定范围截取，如zrangebyscore zset01 60 70，zrangebyscore zset01 (60  						(80，不包含60和80，zrangebyscore zset01 60 80 limit 2 1，包含60和80从下标为2截取1个元素;
+​						②zrangebyscore：指定范围截取，如zrangebyscore zset01 60 70，zrangebyscore zset01 (60  						(80，不包含60和80，zrangebyscore zset01 60 80 limit 2 1，包含60和80从下标为2截取1个元素; zrangebyscore zset01 -inf +inf limit 0 2: 分页正序输出前两条数据；
 
 ​						③zrem：删除set集合元素，如zrem zset01 v3;
 
@@ -160,4 +160,4 @@ Sorted Set：有序无重复，value为键值对；
 
 ​						⑥zrevrange：逆序输出所有，如zrevrange zset01 0 -1;
 
-​						⑦zrevrangebyscore：从结束到开始输出数据，如zrevrangebyscore zset01 80 60;
+​						⑦zrevrangebyscore：从结束到开始输出数据，如zrevrangebyscore zset01 80 60;  zrevrangebyscore zset01 +inf -inf limit 0 2 :分页倒序输出前两条记录。
