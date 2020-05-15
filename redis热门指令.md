@@ -64,7 +64,7 @@ String：key和value都是string类型；
 
 ​						⑤setex/setnx/del：setex是设置过期时间，如：setex k1 10 v1，k1的过期时间为10秒后；
 
-​						setnx job "hello" :
+​						setnx job "hello" : 设置分布式锁
 
 ​						如果当前job存在，则返回0，表明赋值不成功。
 
