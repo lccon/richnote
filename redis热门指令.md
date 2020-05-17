@@ -56,27 +56,81 @@ String：key和value都是string类型；
 
 ​			**方法：**①set/get：存值/取值；
 
+​							expire k1 10: 为k1设置过期时间10秒，自动删除k1；
+
+​							persist k1：删除过期时间，设置k1永不失效，与expire相对应；
+
+​							exists k1: 查看k1是否存在；
+
 ​						②append：在value后追加内容；
+
+​							strlen k1：返回k1的长度；
 
 ​						③incr/decr：在value为数字时，数字加或减1；如：incr k1；
 
-​						④getrange/setrange：getrange是截取value个数，如：getrange k1 0 3，把k1的value截取0-3个						字符，setrange是替换字符串，如：setrange k1 0 xxx，把k1的value从0位开始替换为xxx；
+​							incrby k1 10:递增10；decrby k1 10:递减10；
 
-​						⑤setex/setnx/del：setex是设置过期时间，如：setex k1 10 v1，k1的过期时间为10秒后；
+​							incrbyfloat k1 0.1：k1小数递增0.1；
 
-​						setnx job "hello" : 设置分布式锁
+​					    ④setex/setnx/del：setex是设置过期时间，如：setex k1 10 v1，k1的过期时间为10秒后；
 
-​						如果当前job存在，则返回0，表明赋值不成功。
+​						    setnx job "hello" : 设置分布式锁
 
-​						如果当前job不存在，则返回1，表明赋值成功。
+​							如果当前job存在，则返回0，表明赋值不成功。
 
-​						del job: 单独删除操作命令
+​							如果当前job不存在，则返回1，表明赋值成功。
 
-​						⑥mset/mget/msetnx：mset可以一次性插入多个key和value，mset k1 v1 k2 v2；
+​							del job: 单独key及关联所有value，适用String，List，Hash，Set 
 
-​						mget可以一次性获取多个key的值；
+​						⑤getrange/setrange：getrange是截取value个数，如：
 
-​						msetnx可以一次性插入多个，首先先做不存在判断，部分存在也是不能插入库中；
+​							getrange k1 0 3，把k1的value截取0-3个字符， getrange 0 -1:查询所有的，为-2时取n-1字符；
+
+​							setrange是替换字符串，如：setrange k1 0 xxx，把k1的value从0位开始替换为xxx；
+
+​						⑥getset：查询出旧值后再设置新值，getset k1 lucong：先查询返回k1的值，再设置k1新值；
+
+​						⑦mset/mget/msetnx：mset可以一次性插入多个key和value，mset k1 v1 k2 v2；
+
+​							mget可以一次性获取多个key的值；
+
+​							msetnx可以一次性插入多个，首先先做不存在判断，部分存在也是不能插入库中；		
+
+List：使用的LinkedList，双向链表形式，前后都可以插入数据；
+
+​			**方法:**   ①lpush/rpush/lrange：lpush是**先进后出**，如：lpush list01 1 2 3 4 5，展示为5 4 3 2 1；
+
+​						rpush:是**先进先出**，如：rpush list02 1 2 3 4 5，展示为1 2 3 4 5；	
+
+​						lrange:查看范围，如：lrange list01 0 -1，0到-1范围区间是查看所有；
+
+​						②lpop/rpop：从缓存中消失；
+
+​                        lpop左出站，如：lpop list01，弹出5；lpop list02，弹出1；
+
+​                        rpop右出站，如：rpop list01，弹出1；lpop list02，弹出5；
+
+​						③lrem list01 count value：删除集合中n个元素，如：
+
+​                            count = 0：lrem list01 0 3，删除集合中所有为3的value；
+
+​							count > 0：lrem list01 2 3，排序后从表头到表尾删除集合中2个为3的value；
+
+​							count < 0：lrem list01 -2 3，排序后从表尾到表头删除集合中2个为3的value;
+
+​					    ④lindex：查看角标索引值，如：lindex list01 2，查看list集合角标索引为2的数据；
+
+​						⑤lset：将指定位置的数据改值，如lset list01 1 x，将list01的角标索引为1的值改为x；
+
+​                        ⑥ltrim：截取指定长度数据，如：ltrim list01 0 3；截取list01集合0-3长度数据，替换list01数据；
+
+​						⑦llen：查看list长度，如：llen list01； 
+
+​						⑧linsert：将值插入value之前或之后：
+
+​							如linsert list01 before/after x java，将java插入集合x值的之前或之后；
+
+​                        ⑨rpoplpush：将压栈放入另一个栈顶，如rpoplpush list01 list02，将list01的压栈放入list02集合						栈顶，并删除list01压栈元素；
 
 Hash：相当于Map<String, Object>，KV模式保持不变，但V是个键值对；
 
@@ -88,39 +142,15 @@ Hash：相当于Map<String, Object>，KV模式保持不变，但V是个键值对
 
 ​							hdel：删除hash键值对，hdel user name;
 
-​						②hlen：获取KV数量，hlen user;
+​						②hexists：判断是否存在key，hexists map1 id，查询map01中是否存在key为id；
 
-​						③hexists：判断是否存在key，hexists id;
+​                        ③hsetnx：判断不存在就插入，存在不做操作，如hsetnx user email 123@qq.com;
 
-​						④hkeys/hvals：获取所有的key或value，如hkeys user，hvals user;
+​						④hincrby/hincrbyfloat：value为数字或者小数时进行递加，如hincrby user age 3，	  	 	       							hincrbyfloat user score 0.5;
 
-​						⑤hincrby/hincrbyfloat：value为数字或者小数时进行加减，如hincrby user age 3，	  	 	       							hincrbyfloat user score 0.5;
+​						⑤hkeys/hvals：获取map中所有的key或value，如hkeys user，hvals user;	
 
-​						⑥hsetnx：判断不存在就插入，存在不做操作，如hsetnx user email 123@qq.com;
-
-List：使用的LinkedList，双向链表形式，前后都可以插入数据；
-
-​			**方法:**   ①lpush/rpush/lrange：lpush是先进后出，如：lpush list01 1 2 3 4 5，展示为5 4 3 2 1；
-
-​						rpush:是先进先出，如：rpush list02 1 2 3 4 5，展示为1 2 3 4 5；	
-
-​						lrange:查看范围，如：lrange list01 0 -1，0到-1范围区间是查看所有；
-
-​						②lpop/rpop：lpop左出站，如：lpop list01，展示为5；rpop右出站，如：rpop list01，展示1；						从缓存中消失；
-
-​						③lindex：查看角标索引值，如：lindex list01 2，查看list集合角标索引为2的数据；
-
-​						④llen：查看list长度，如：llen list01；
-
-​						⑤lrem：删除n个值，如：lrem list01 2 3；删除list01集合2个为3的value；
-
-​						⑥ltrim：截取指定长度数据，如：ltrim list01 0 3；截取list01集合0-3长度数据，放入list01中；
-
-​						⑦rpoplpush：将压栈放入另一个栈顶，如rpoplpush list01 list02，将list01的压栈放入list02集合						栈顶，并删除list01压栈元素；
-
-​						⑧lset：将指定位置的数据改值，如lset list01 1 x，将list01的1位置的值改为x；
-
-​						⑨linsert：将值插入value之前或之后，如linsert list01 before/after x java，将java插入x值的之前						或之后；
+​						⑥hlen：获取KV数量，hlen user;
 
 Set：无序无重复；
 
@@ -134,30 +164,50 @@ Set：无序无重复；
 
 ​						③srem：删除集合中的元素，如srem set01 2;
 
-​						④srandmember：随机抽取集合中指定个数元素，如srandmember set01 2，set01集合中随机取						两个元素；
+​						④srandmember：随机抽取集合中指定个数元素，如：
+
+​						srandmember set01 2，set01集合中随机取两个元素，不写count随机获取一个；
 
 ​						⑤spop：随机出栈，如spop set01 1，随机出栈一个，从内存中删除；
 
-​						⑥smove：从一个set集合中数据移动另一个set集合，如smove set01 set02 5；将set01集合中的5						移动到set02中；
+​						⑥smove：从一个set集合中数据移动另一个set集合，如：
+
+​						smove set01 set02 5；将set01集合中的5移动到set02中，不存在set02就会创建，然后添加元素；
 
 ​						⑦sdiff/sinter/sunion：sdiff，差集，在第一集合中而不再第二个集合中，如sdiff  set01 set02，在						set01集合中而不在set02中；sinter，交集；sunion，并集；
 
 Sorted Set：有序无重复，value为键值对；
 
-​			**方法:**   ①zadd：添加set集合，如zadd zset01 60 v1 70 v2 80 v3;
+   	**方法:**   ①zadd 集合 score value：添加set集合，如：
 
-​						zrange：查看所有的key和value，如zrange zset01 0 -1，查看所有的value，zrange zset01 0 -1 						withscores，查看所有的key和value；
+​						zadd zset01 60 v1 70 v2 80 v3，如果val值相等但score不同，val唯一，score最后一次修改；
 
-​						②zrangebyscore：指定范围截取，如zrangebyscore zset01 60 70，zrangebyscore zset01 (60  						(80，不包含60和80，zrangebyscore zset01 60 80 limit 2 1，包含60和80从下标为2截取1个元素; zrangebyscore zset01 -inf +inf limit 0 2: 分页正序输出前两条数据；
+​						zrange：正序输出所有，如zrange zset01 0 -1，查看所有的value，zrange zset01 0 -1 						withscores，按照score升序，查看所有的key和value；
 
-​						③zrem：删除set集合元素，如zrem zset01 v3;
+​						zrevrange：逆序输出所有，如zrevrange zset01 0 -1;zrevrange zset01 0 -1 withscores，按照                      						score升序，查看所有的key和value；
 
-​						④zcard/zcount：统计个数，如zcard zset01，zcount zset01 60 80，统计60到80的个数；
+​					②zrangebyscore：指定范围截取，如：
 
-​							zscore/zrank：获取值或者获取下标，如zscore zset01 v4，zrank zset01 v4;
+​                         zrangebyscore zset01 60 70，zrangebyscore zset01 (60 (80，不包含60和80；
 
-​						⑤zrevrank：逆序获取下标值，如zrevrank zset01 v4;
+​                         zrangebyscore zset01 60 80 limit 2 1，包含60和80从索引下标为2截取1个元素; 
 
-​						⑥zrevrange：逆序输出所有，如zrevrange zset01 0 -1;
+​                         zrangebyscore zset01 -inf +inf limit 0 2: 分页正序输出前两条数据；
 
-​						⑦zrevrangebyscore：从结束到开始输出数据，如zrevrangebyscore zset01 80 60;  zrevrangebyscore zset01 +inf -inf limit 0 2 :分页倒序输出前两条记录。
+​                      ③zrevrangebyscore：倒序输出数据， 如：
+
+​                         zrevrangebyscore zset01 80 60；
+
+​                         zrevrangebyscore zset01 +inf -inf limit 0 2 :分页倒序输出前两条记录。
+
+​					   ④zrem：删除set集合元素，如zrem zset01 v3;
+
+​					   ⑤zcard/zcount：统计个数，如zcard zset01，zcount zset01 60 80，范围统计60到80的个数；
+
+​					   ⑥zscore/zrank/zrevrank：获取score排序值/正序获取索引下标/逆序获取索引下标，
+
+​						如zscore zset01 v4，zrank zset01 v4，zrevrank zset01 v4;
+
+​					   
+
+​						
