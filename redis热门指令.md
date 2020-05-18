@@ -1,6 +1,6 @@
 ###### 1.select 0-15：切换redis库；
 
-###### 2.keys *：查看所有可以；
+###### 2.keys *：查看所有key；
 
 ###### 3. FLUSHDB：清空数据库;
 
@@ -56,7 +56,7 @@ String：key和value都是string类型；
 
 ​			**方法：**①set/get：存值/取值；
 
-​							expire k1 10: 为k1设置过期时间10秒，自动删除k1；
+​							expire k1 10: 为k1设置过期时间10秒，自动删除k1，ttl k1：查看剩余过期时间；
 
 ​							persist k1：删除过期时间，设置k1永不失效，与expire相对应；
 
@@ -80,13 +80,13 @@ String：key和value都是string类型；
 
 ​							如果当前job不存在，则返回1，表明赋值成功。
 
-​							del job: 单独key及关联所有value，适用String，List，Hash，Set 
+​							del job: 单独key及关联所有value，适用String，List，Hash，Set ，Zset
 
 ​						⑤getrange/setrange：getrange是截取value个数，如：
 
 ​							getrange k1 0 3，把k1的value截取0-3个字符， getrange 0 -1:查询所有的，为-2时取n-1字符；
 
-​							setrange是替换字符串，如：setrange k1 0 xxx，把k1的value从0位开始替换为xxx；
+​							setrange是替换字符串，如：setrange k1 0 xxx，把k1的value从0位开始将前三位替换为xxx；
 
 ​						⑥getset：查询出旧值后再设置新值，getset k1 lucong：先查询返回k1的值，再设置k1新值；
 
